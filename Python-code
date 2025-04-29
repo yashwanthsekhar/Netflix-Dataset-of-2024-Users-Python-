@@ -1,0 +1,66 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the data
+df = pd.read_csv(r"C:\Users\win 11\OneDrive\Documents\python data set.csv", encoding="latin1")
+
+# Checking for missing values
+print("Missing values:\n", df.isnull().sum())
+
+# --- First Plot: Release Year vs Main Genre (Box Plot) ---
+plt.figure(figsize=(14, 6))
+sns.boxplot(x='Release Year', y='Main Genre', data=df, color='pink')
+plt.title('Box Plot of Release Year by Main Genre')
+plt.xlabel('Release Year')
+plt.ylabel('Main Genre')
+plt.xticks(rotation=45)
+plt.show()
+
+# --- Second Plot: Scatter Plot (Release Year vs Recommendation Count) ---
+df['Recommendation Count'] = df['Recommendations'].apply(lambda x: len(str(x).split(',')) if pd.notnull(x) else 0)
+
+plt.figure(figsize=(14, 6))
+sns.scatterplot(
+    x='Release Year',
+    y='Recommendation Count',
+    hue='Main Genre',
+    data=df,
+    palette='Set2',
+    alpha=0.6,
+    edgecolor='w'
+)
+plt.title('Release Year vs. Recommendation Count')
+plt.xlabel('Release Year')
+plt.ylabel('Recommendation Count')
+plt.legend(title='Main Genre')
+plt.show()
+
+# --- Third Plot: Heatmap (Main Genre vs Maturity Rating) ---
+cross_tab = pd.crosstab(df['Main Genre'], df['Maturity Rating'])
+
+plt.figure(figsize=(10, 6))
+sns.heatmap(cross_tab, annot=True, fmt='d', cmap='YlGnBu')
+plt.title('Heatmap of Main Genre vs Maturity Rating')
+plt.xlabel('Maturity Rating')
+plt.ylabel('Main Genre')
+plt.show()
+
+# --- Fourth Plot: Bar Plot (Titles per Genre) ---
+plt.figure(figsize=(12, 6))
+sns.countplot(data=df, x='Main Genre', order=df['Main Genre'].value_counts().index, color='green')
+plt.title('Bar Plot: Count of Titles per Main Genre')
+plt.xlabel('Main Genre')
+plt.ylabel('Count of Titles')
+plt.xticks(rotation=45)
+plt.show()
+
+# --- Fifth Plot: Donut Chart (Maturity Ratings) ---
+rating_counts = df['Maturity Rating'].value_counts()
+
+plt.figure(figsize=(8, 8))
+plt.pie(rating_counts, labels=rating_counts.index, autopct='%2.2f%%', colors=['green', 'lavender'])
+plt.gca().add_artist(plt.Circle((0, 0), 0.5, color='grey'))  # Inner circle for donut
+plt.title('Donut Chart of Maturity Ratings')
+plt.show()
